@@ -5,7 +5,7 @@ import HeroSaction from "./pages/student/HeroSaction.jsx";
 import { RouterProvider } from "react-router";
 import MainLayout from "./layout/MainLayout.jsx";
 import Courses from "./pages/student/Courses.jsx";
-import MyLearning from "./pages/student/myLearning.jsx";
+import MyLearning from "./pages/student/MyLearning.jsx";
 import Profile from "./pages/student/Profile.jsx";
 import Sidebar from "./pages/admin/Sidebar.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
