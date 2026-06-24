@@ -21,7 +21,7 @@ import { Loader2 } from "lucide-react"
 import { toast } from "sonner"
 import { Navigate, useNavigate } from "react-router-dom"
 const Login = () => {
-  const [signupInput, SetSignupInput] = useState({ name: "", email: "", password: "" })
+  const [signupInput, SetSignupInput] = useState({ name: "", email: "", password: "", role: "student" })
   const [loginInput, SetLoginInput] = useState({ email: "", password: "" })
 
   const [registerUser, { data: registerData, error: registerError, isLoading: registerIsLoading, isSuccess: registerIsSuccess }] = useRegisterUserMutation()
@@ -36,45 +36,45 @@ const Login = () => {
     }
   }
 
- const handleRegistration = async (type) => {
-  const inputData = type === "signup" ? signupInput : loginInput;
-  const action = type === "signup" ? registerUser : loginUser;
-  try {
-    const res = await action(inputData).unwrap();
-    if (type === "login") {
-      // Jab confirm ho jaye ki mutation completely success ho gaya aur state update ho gayi
-      setTimeout(() => navigate("/"), 100); 
+  const handleRegistration = async (type) => {
+    const inputData = type === "signup" ? signupInput : loginInput;
+    const action = type === "signup" ? registerUser : loginUser;
+    try {
+      const res = await action(inputData).unwrap();
+      if (type === "login") {
+        // Jab confirm ho jaye ki mutation completely success ho gaya aur state update ho gayi
+        setTimeout(() => navigate("/"), 100);
+      }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
- useEffect(() => {
-  if (registerIsSuccess) {
-    toast.success(registerData?.message || "Signup Successfully")
-    SetSignupInput({ name: "", email: "", password: "" }) // ✅ fix
-  }
+  };
+  useEffect(() => {
+    if (registerIsSuccess) {
+      toast.success(registerData?.message || "Signup Successfully")
+      SetSignupInput({ name: "", email: "", password: "" }) // ✅ fix
+    }
 
-  if (registerError) {
-    toast.error(registerError?.data?.message || "Signup failed")
-    SetSignupInput({ name: "", email: "", password: "" }) // optional
-  }
-}, [registerIsSuccess, registerError])
+    if (registerError) {
+      toast.error(registerError?.data?.message || "Signup failed")
+      SetSignupInput({ name: "", email: "", password: "" }) // optional
+    }
+  }, [registerIsSuccess, registerError])
 
-useEffect(() => {
-  if (loginIsSuccess) {
-    toast.success(loginData?.message || "Login Successfully")
-     SetLoginInput({email:"", password :""})
-    
-  }
+  useEffect(() => {
+    if (loginIsSuccess) {
+      toast.success(loginData?.message || "Login Successfully")
+      SetLoginInput({ email: "", password: "" })
 
-  if (loginError) {
-    toast.error(loginError?.data?.message || "Login failed")
-     SetLoginInput({email:"", password :""})
-  }
-}, [loginIsSuccess, loginError])
+    }
 
-const navigate = useNavigate();
+    if (loginError) {
+      toast.error(loginError?.data?.message || "Login failed")
+      SetLoginInput({ email: "", password: "" })
+    }
+  }, [loginIsSuccess, loginError])
+
+  const navigate = useNavigate();
 
   return (
     <div className="flex justify-center w-full items-center mt-20">
@@ -120,6 +120,18 @@ const navigate = useNavigate();
                   type="password"
                   placeholder="Enter your password"
                   required />
+              </div>
+              <div className="space-y-1 mt-2">
+                <Label>Role</Label>
+                <select
+                  name="role"
+                  value={signupInput.role}
+                  onChange={(e) => changeInputHandler(e, "signup")}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                >
+                  <option value="student">Student</option>
+                  <option value="instructor">Instructor</option>
+                </select>
               </div>
             </CardContent>
             <CardFooter>
