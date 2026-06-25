@@ -42,7 +42,7 @@ const Navbar = () => {
 
   return (
     <div className="h-16 dark:bg-[#020817] bg-white border-b dark:border-b-gray-800 border-b-gray-200 fixed top-0 left-0 right-0 duration-300 z-10">
-      {/* Desktop */}
+      {/* Desktop View */}
       <div className="max-w-7xl mx-auto hidden md:flex justify-between items-center gap-10 h-full px-4">
         <div className="flex items-center gap-2">
           <School size={"30"} />
@@ -52,7 +52,6 @@ const Navbar = () => {
             </h1>
           </Link>
         </div>
-        {/* User icons and dark mode icon  */}
         <div className="flex items-center gap-8">
           {user ? (
             <DropdownMenu>
@@ -79,7 +78,6 @@ const Navbar = () => {
                     Log out
                   </DropdownMenuItem>
                 </DropdownMenuGroup>
-                {/* Desktop Instructor Panel */}
                 {user?.role === "instructor" && (
                   <>
                     <DropdownMenuSeparator />
@@ -105,7 +103,7 @@ const Navbar = () => {
         </div>
       </div>
       
-      {/* Mobile device  */}
+      {/* Mobile View */}
       <div className="flex md:hidden items-center justify-between px-4 h-full">
         <h1 className="font-extrabold text-2xl"><Link to={"/"}>E-learning</Link></h1>
         <MobileNavbar user={user}/>
@@ -116,19 +114,17 @@ const Navbar = () => {
 
 export default Navbar;
 
-const MobileNavbar = ({user}) => {
+const MobileNavbar = ({ user }) => {
   const navigate = useNavigate();
-  // 🔥 Ye State lagaya hai Sheet ko control karne ke liye
   const [open, setOpen] = useState(false); 
    
   const [logoutUser, { data, isSuccess }] = useLogoutUserMutation();
   
   const logoutHandler = async () => {
     await logoutUser();
-    setOpen(false); // Logout par menu band
+    setOpen(false);
   };
 
-  // 🔥 Logout hone ke baad page redirect karne ka logic
   useEffect(() => {
     if (isSuccess) {
       toast.success(data?.message || "User log out.");
@@ -136,7 +132,6 @@ const MobileNavbar = ({user}) => {
     }
   }, [isSuccess, navigate, data]);
 
-  // 🔥 Ek common function jo page change karega aur menu band karega
   const handleNavigate = (path) => {
     setOpen(false);
     navigate(path);
@@ -164,19 +159,34 @@ const MobileNavbar = ({user}) => {
         <hr className="my-2 border-gray-200 dark:border-gray-800" />
         
         <nav className="flex flex-col space-y-4">
-          <span className="cursor-pointer font-medium hover:text-blue-500" onClick={() => handleNavigate("/my-learning")}>
-            My Learning
-          </span>
-          <span className="cursor-pointer font-medium hover:text-blue-500" onClick={() => handleNavigate("/profile")}>
-            Edit Profile
-          </span>
-          <span className="cursor-pointer font-medium text-red-500" onClick={logoutHandler}>
-            Log out
-          </span>
+          {/*  Yahan check lagaya hai ki agar logged in hai tabhi ye options dikhein  */}
+          {user ? (
+            <>
+              <span className="cursor-pointer font-medium hover:text-blue-500" onClick={() => handleNavigate("/my-learning")}>
+                My Learning
+              </span>
+              <span className="cursor-pointer font-medium hover:text-blue-500" onClick={() => handleNavigate("/profile")}>
+                Edit Profile
+              </span>
+              <span className="cursor-pointer font-medium text-red-500" onClick={logoutHandler}>
+                Log out
+              </span>
+            </>
+          ) : (
+            /*  Agar logged in nahi hai, toh sirf Login aur Signup dikhega  */
+            <div className="flex flex-col space-y-2 mt-2">
+              <Button variant="outline" onClick={() => handleNavigate("/login")}>
+                Login
+              </Button>
+              <Button onClick={() => handleNavigate("/login")}>
+                Signup
+              </Button>
+            </div>
+          )}
         </nav>
 
-        {/* 👇 Mobile Instructor Panel 👇 */}
-        {user?.role === "instructor" && (
+        {/* Mobile Instructor Panel (Sirf logged in instructor ke liye) */}
+        {user && user?.role === "instructor" && (
           <>
             <hr className="my-4 border-gray-200 dark:border-gray-800" />
             <div className="flex flex-col space-y-4">
